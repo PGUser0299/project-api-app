@@ -2,23 +2,13 @@ from pathlib import Path, os
 from decouple import config
 from datetime import timedelta
 
-import sys
-
-# テスト用DB
-if "pytest" in sys.modules:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": ":memory:",
-        }
-    }
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # セキュリティ設定
 SECRET_KEY = config("SECRET_KEY", default="dummy-secret-key")
 DEBUG = config("DEBUG", default=False, cast=bool)
-ALLOWED_HOSTS = ["localhost", "127.0.0.1",]
+ALLOWED_HOSTS = ["localhost",]
 
 # アプリケーション定義
 INSTALLED_APPS = [

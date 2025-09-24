@@ -2,6 +2,17 @@ from pathlib import Path, os
 from decouple import config
 from datetime import timedelta
 
+import sys
+
+# テスト用DB
+if "pytest" in sys.modules:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": ":memory:",
+        }
+    }
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # セキュリティ設定

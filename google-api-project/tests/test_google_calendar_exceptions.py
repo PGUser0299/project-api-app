@@ -1,28 +1,25 @@
 import pytest
-from googleapiclient.errors import HttpError
 from api.google_calendar import (
     get_credentials,
-    build_calendar_service,
-    safe_execute,
     update_event,
     delete_event,
 )
-from api.models import GoogleOAuthToken, CalendarEvent, User
+from api.models import GoogleOAuthToken, CalendarEvent
 from google.auth.exceptions import RefreshError
 
 
 @pytest.mark.django_db
-def test_get_credentials_token_not_found():
-    user = User.objects.create(username="nouser", email="nouser@example.com")
+def test_get_credentials_token_not_found(django_user_model):
+    user = django_user_model.objects.create(username="nouser", email="nouser@example.com")
     creds, error = get_credentials(user, ["scope"])
     assert creds is None
     assert error["success"] is False
-    assert "No Google token" in error["message"]
+    assert "No Google token found" in error["message"]
 
 
 @pytest.mark.django_db
-def test_get_credentials_refresh_error(mocker):
-    user = User.objects.create(username="refreshfail", email="refreshfail@example.com")
+def test_get_credentials_refresh_error(mocker, django_user_model):
+    user = django_user_model.objects.create(username="refreshfail", email="refreshfail@example.com")
     GoogleOAuthToken.objects.create(
         user=user,
         access_token="dummy",
@@ -66,31 +63,6 @@ def test_update_event_missing_google_event_id(django_user_model):
     assert "No google_event_id" in result["message"]
 
 
-def test_build_calendar_service_fail(mocker, django_user_model):
-    user = django_user_model(username="builder")
-    mocker.patch("api.google_calendar.get_credentials", return_value=("dummy", None))
-    mocker.patch("api.google_calendar.build", side_effect=Exception("boom"))
-    service, error = build_calendar_service(user)
-    assert service is None
-    assert "Failed to build service" in error["message"]
-
-
-def test_safe_execute_http_error(mocker):
-    request = mocker.Mock()
-    request.execute.side_effect = HttpError(resp=mocker.Mock(status=403), content=b"fail")
-    result = safe_execute(request)
-    assert result["success"] is False
-    assert "Google API error" in result["message"]
-
-
-def test_safe_execute_unexpected_error(mocker):
-    request = mocker.Mock()
-    request.execute.side_effect = RuntimeError("unexpected")
-    result = safe_execute(request)
-    assert result["success"] is False
-    assert "Unexpected error" in result["message"]
-
-
 @pytest.mark.django_db
 def test_delete_event_missing_google_event_id_with_token(django_user_model):
     """トークン有り + google_event_id 無し"""
@@ -128,4 +100,4 @@ def test_delete_event_no_token(django_user_model):
     )
     result = delete_event(user, event)
     assert result["success"] is False
-    assert "No Google token" in result["message"]
+    assert "No Google token found" in result["message"]

@@ -45,10 +45,13 @@ def update_google_calendar_event(event_id, user_id):
 
 @shared_task
 def delete_google_calendar_event(event_id, user_id, google_event_id):
+    close_old_connections()
     event, user, error = _get_event_and_user(event_id, user_id)
     if error:
         return error
     if not google_event_id:
         return {"success": False, "message": f"Event {event_id} has No google_event_id"}
 
-    return delete_event(user, event)
+    result = delete_event(user, event)
+    close_old_connections()
+    return result

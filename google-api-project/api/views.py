@@ -1,4 +1,5 @@
 import os
+import logging
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from rest_framework import viewsets
@@ -19,6 +20,7 @@ from .tasks import (
     delete_google_calendar_event,
 )
 
+logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
@@ -41,8 +43,11 @@ def test_google_api(request):
         scopes=["https://www.googleapis.com/auth/gmail.readonly"],
     )
 
-    if not creds.valid and creds.refresh_token:
-        creds.refresh(requests.Request())
+    if creds and creds.expired and creds.refresh_token:
+        try:
+            creds.refresh(requests.Request())
+        except Exception as e:
+            return Response({"error": f"Token refresh failed: {e}"}, status=400)
 
     try:
         service = build("gmail", "v1", credentials=creds)
@@ -120,17 +125,16 @@ class CalendarEventViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        event = serializer.save(created_by=self.request.user)
-        create_google_calendar_event.delay(event.id, self.request.user.id)
+        instance = serializer.save(created_by=self.request.user)
+        create_google_calendar_event.delay(instance.id, self.request.user.id)
 
     def perform_update(self, serializer):
-        event = serializer.save()
-        update_google_calendar_event.delay(event.id, self.request.user.id)
+        instance = serializer.save()
+        update_google_calendar_event.delay(instance.id, self.request.user.id)
 
     def perform_destroy(self, instance):
         user = self.request.user
-        google_event_id = instance.google_event_id
-        delete_google_calendar_event.delay(instance.id, user.id, google_event_id)
+        delete_google_calendar_event.delay(instance.id, user.id, instance.google_event_id)
         instance.delete()
 
 
@@ -188,7 +192,6 @@ class GoogleLoginView(APIView):
 
 class SaveGoogleTokenView(APIView):
     """アクセストークン・リフレッシュトークンを保存"""
-    
     permission_classes = [IsAuthenticated]
 
     def post(self, request):

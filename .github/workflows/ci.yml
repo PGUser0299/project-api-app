@@ -33,7 +33,7 @@ jobs:
       - name: Install dependencies (with dev)
         run: poetry install --with dev
 
-      - name: Run specific tests
+      - name: Run specific tests with SQLite
         run: |
           poetry run pytest \
             tests/test_google_calendar_exceptions.py \

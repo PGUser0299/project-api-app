@@ -11,7 +11,6 @@ from google.oauth2 import id_token
 from google.auth.transport import requests
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
-
 from .models import GoogleOAuthToken, CalendarEvent
 from .serializers import CalendarEventSerializer
 from .tasks import (
@@ -189,7 +188,7 @@ class GoogleLoginView(APIView):
 
 class SaveGoogleTokenView(APIView):
     """アクセストークン・リフレッシュトークンを保存"""
-
+    
     permission_classes = [IsAuthenticated]
 
     def post(self, request):

@@ -10,9 +10,9 @@ from .views import (
     logout,
 )
 
+
 router = DefaultRouter()
 router.register(r"events", CalendarEventViewSet, basename="calendar-event")
-
 
 urlpatterns = [
     path("auth/google/login/", GoogleLoginView.as_view(), name="google-login"),

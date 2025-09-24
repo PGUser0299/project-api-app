@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # セキュリティ設定
 SECRET_KEY = config("SECRET_KEY", default="dummy-secret-key")
 DEBUG = config("DEBUG", default=False, cast=bool)
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost", "127.0.0.1",]
 
 # アプリケーション定義
 INSTALLED_APPS = [

@@ -16,6 +16,7 @@ jobs:
 
     env:
       PYTHONPATH: .
+      DJANGO_SETTINGS_MODULE: core.settings
 
     steps:
       - uses: actions/checkout@v4

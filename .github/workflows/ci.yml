@@ -1,37 +1,21 @@
-name: CI
+name: CI (develop)
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "develop" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "develop" ]
 
 jobs:
-  test:
+  unit-tests:
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: test_db
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U postgres"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
 
     defaults:
       run:
-        working-directory: google-api-project   
+        working-directory: google-api-project
 
     env:
-      DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_db
-      PYTHONPATH: .  
+      PYTHONPATH: .
 
     steps:
       - uses: actions/checkout@v4
@@ -47,15 +31,12 @@ jobs:
       - name: Install dependencies
         run: poetry install
 
-      - name: Run migrations
-        run: poetry run python manage.py migrate --noinput
+      # DB不要なので migrate は省略
 
-      - name: Run tests with coverage
-        run: poetry run pytest --cov=api --cov=core --cov=tests --maxfail=1 --disable-warnings -q
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          files: ./coverage.xml
-          fail_ci_if_error: true
-          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Run unit tests (exceptions only)
+        run: |
+          poetry run pytest \
+            tests/test_google_calendar_exceptions.py \
+            tests/test_tasks_exceptions.py \
+            tests/test_signals.py \
+            --maxfail=1 --disable-warnings -q

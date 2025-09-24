@@ -25,9 +25,13 @@ jobs:
           --health-timeout=5s
           --health-retries=5
 
+    defaults:
+      run:
+        working-directory: google-api-project   
+
     env:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_db
-      PYTHONPATH: src  
+      PYTHONPATH: .  
 
     steps:
       - uses: actions/checkout@v4
@@ -44,11 +48,10 @@ jobs:
         run: poetry install
 
       - name: Run migrations
-        run: poetry run python src/manage.py migrate --noinput
+        run: poetry run python manage.py migrate --noinput
 
       - name: Run tests with coverage
         run: poetry run pytest --cov=api --cov=core --cov=tests --maxfail=1 --disable-warnings -q
-
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4

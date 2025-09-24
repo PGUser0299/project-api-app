@@ -1,2 +1,3 @@
 __pycache__/\n*.sqlite3\n.env\n
 .env
+__pycache__

@@ -1,40 +1,37 @@
-[project]
+[tool.poetry]
 name = "google-api-project"
 version = "0.1.0"
 description = ""
-authors = [
-    {name = "Ryojin.05",email = "cun63301@gmail.com"}
-]
+authors = ["Ryojin.05 <cun63301@gmail.com>"]
 readme = "README.md"
-requires-python = ">=3.12"
-dependencies = [
-    "django (>=5.2.6,<6.0.0)",
-    "djangorestframework (>=3.16.1,<4.0.0)",
-    "social-auth-app-django (>=5.5.1,<6.0.0)",
-    "psycopg2-binary (>=2.9.10,<3.0.0)",
-    "python-decouple (>=3.8,<4.0)",
-    "djangorestframework-simplejwt[blacklist] (>=5.5.1,<6.0.0)",
-    "google-auth (>=2.40.3,<3.0.0)",
-    "drf-spectacular (>=0.28.0,<0.29.0)",
-    "drf-spectacular-sidecar (>=2025.9.1,<2026.0.0)",
-    "celery (>=5.5.3,<6.0.0)",
-    "redis (>=6.4.0,<7.0.0)",
-    "google-api-python-client (>=2.182.0,<3.0.0)",
-    "google-auth-oauthlib (>=1.2.2,<2.0.0)",
-    "google-auth-httplib2 (>=0.2.0,<0.3.0)",
-    "python-dotenv (>=1.1.1,<2.0.0)"
+packages = [
+    { include = "api" },
+    { include = "core" }
 ]
 
-[tool.poetry]
-packages = [{include = "google_api_project", from = "src"}]
+[tool.poetry.dependencies]
+python = ">=3.12"
+django = ">=5.2.6,<6.0.0"
+djangorestframework = ">=3.16.1,<4.0.0"
+social-auth-app-django = ">=5.5.1,<6.0.0"
+psycopg2-binary = ">=2.9.10,<3.0.0"
+python-decouple = ">=3.8,<4.0"
+djangorestframework-simplejwt = { version = ">=5.5.1,<6.0.0", extras = ["blacklist"] }
+google-auth = ">=2.40.3,<3.0.0"
+drf-spectacular = ">=0.28.0,<0.29.0"
+drf-spectacular-sidecar = ">=2025.9.1,<2026.0.0"
+celery = ">=5.5.3,<6.0.0"
+redis = ">=6.4.0,<7.0.0"
+google-api-python-client = ">=2.182.0,<3.0.0"
+google-auth-oauthlib = ">=1.2.2,<2.0.0"
+google-auth-httplib2 = ">=0.2.0,<0.3.0"
+python-dotenv = ">=1.1.1,<2.0.0"
+
+[tool.poetry.group.dev.dependencies]
+black = ">=25.9.0,<26.0.0"
+flake8 = ">=7.3.0,<8.0.0"
+isort = ">=6.0.1,<7.0.0"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-[dependency-groups]
-dev = [
-    "black (>=25.9.0,<26.0.0)",
-    "flake8 (>=7.3.0,<8.0.0)",
-    "isort (>=6.0.1,<7.0.0)"
-]

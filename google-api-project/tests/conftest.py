@@ -1,10 +1,10 @@
 import pytest
 from unittest.mock import patch
 from api.models import GoogleOAuthToken
+from django.conf import settings
 
-
-@pytest.fixture(autouse=True)
-def use_sqlite(settings):
+@pytest.fixture(scope="session", autouse=True)
+def configure_test_db():
     """全テストでDBをSQLite（メモリDB）に切り替える。"""
     settings.DATABASES["default"] = {
         "ENGINE": "django.db.backends.sqlite3",

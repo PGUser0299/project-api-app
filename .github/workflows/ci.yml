@@ -15,9 +15,9 @@ jobs:
     env:
       PYTHONPATH: .
       DJANGO_SETTINGS_MODULE: core.settings
-      GOOGLE_TOKEN_URI: ${{ secrets.GOOGLE_TOKEN_URI }}
-      SOCIAL_AUTH_GOOGLE_OAUTH2_KEY: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY }}
-      SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET }}
+      GOOGLE_TOKEN_URI: dummy
+      SOCIAL_AUTH_GOOGLE_OAUTH2_KEY: dummy
+      SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET: dummy
 
     steps:
       - uses: actions/checkout@v4

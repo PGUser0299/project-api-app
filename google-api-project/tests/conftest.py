@@ -1,25 +1,28 @@
 import pytest
 from unittest.mock import patch
 from api.models import GoogleOAuthToken
-from django.conf import settings
 
-@pytest.fixture(scope="session", autouse=True)
-def configure_test_db():
-    """全テストでDBをSQLite（メモリDB）に切り替える。"""
-    settings.DATABASES["default"] = {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": ":memory:",
+@pytest.fixture(scope="session")
+def django_db_setup():
+    """DjangoのテストDBをSQLiteに差し替え"""
+    return {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": ":memory:",
+        }
     }
-
 
 @pytest.fixture
 def mock_google_token():
-    """固定のダミーユーザーを返す。"""
+    """固定のダミートークンを返す"""
     with patch.object(GoogleOAuthToken.objects, "get") as mock_get:
         mock_get.return_value = GoogleOAuthToken(
             id=1,
-            user_id=999,  # ダミーユーザーID
+            user_id=999,
             access_token="fake-access-token",
             refresh_token="fake-refresh-token",
+            token_uri="dummy",
+            client_id="dummy",
+            client_secret="dummy",
         )
         yield mock_get

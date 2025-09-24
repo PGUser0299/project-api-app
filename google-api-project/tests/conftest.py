@@ -2,15 +2,17 @@ import pytest
 from unittest.mock import patch
 from api.models import GoogleOAuthToken
 
+
 @pytest.fixture(scope="session")
 def django_db_setup():
-    """DjangoのテストDBをSQLiteに差し替え"""
+    """pytest-django が使うDB設定を SQLite に差し替え"""
     return {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
             "NAME": ":memory:",
         }
     }
+
 
 @pytest.fixture
 def mock_google_token():

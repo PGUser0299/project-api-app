@@ -1,13 +1,11 @@
-name: CI (develop)
+name: CI - develop
 
 on:
   push:
     branches: [ "develop" ]
-  pull_request:
-    branches: [ "develop" ]
 
 jobs:
-  unit-tests:
+  test:
     runs-on: ubuntu-latest
 
     defaults:
@@ -32,10 +30,10 @@ jobs:
       - name: Install Poetry
         run: pip install poetry
 
-      - name: Install dependencies
+      - name: Install dependencies (with dev)
         run: poetry install --with dev
 
-      - name: Run unit tests (exceptions only)
+      - name: Run specific tests
         run: |
           poetry run pytest \
             tests/test_google_calendar_exceptions.py \

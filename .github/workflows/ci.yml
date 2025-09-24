@@ -29,9 +29,7 @@ jobs:
         run: pip install poetry
 
       - name: Install dependencies
-        run: poetry install
-
-      # DB不要なので migrate は省略
+        run: poetry install --with dev
 
       - name: Run unit tests (exceptions only)
         run: |
